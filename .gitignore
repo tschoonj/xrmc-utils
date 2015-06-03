@@ -21,3 +21,7 @@ build2
 .DS_Store
 *.app
 *.zip
+output_*.dat
+dscan-input.dat
+move-to-start.dat
+translate.dat

@@ -1,0 +1,4 @@
+Makefile.PL
+MANIFEST
+lib/xrmc.pm
+bin/xrmc-dscan

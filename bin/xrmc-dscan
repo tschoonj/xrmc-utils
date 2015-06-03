@@ -1,0 +1,75 @@
+#!/usr/bin/env perl
+
+use strict;
+use Scalar::Util qw(looks_like_number);
+use xrmc;
+
+
+
+if (scalar(@ARGV) != 5) {
+	die "USAGE: xrmc-dscan input-file axis start_value end_value n_steps";
+}
+
+my $axis = $ARGV[1];
+
+if ($axis ne "x" && $axis ne "y" && $axis ne "z") {
+	die "axis must be x, y or z";
+}
+
+my $start_value = $ARGV[2];
+my $end_value = $ARGV[3];
+my $n_steps = $ARGV[4];
+
+die "start_value must be numerical" unless(looks_like_number($start_value));
+die "end_value must be numerical" unless(looks_like_number($end_value));
+die "n_steps must be numerical" unless(looks_like_number($n_steps));
+die "end_value must be greater than start_value" unless($start_value < $end_value);
+die "n_steps must be a positive number" unless($n_steps >= 1);
+
+# first read the input-file
+my $input = xrmc::parse_inputfile($ARGV[0]);
+
+
+open (my $fh, ">", "dscan-input.dat") or die "Could not open dscan-input.dat for writing: $!";
+printf $fh "Load %s\n", $input->{detectorconvolutefile};	
+printf $fh "Load %s\n", $input->{compositionfile};	
+printf $fh "Load %s\n", $input->{geom3dfile};	
+printf $fh "Load %s\n", $input->{quadricarrayfile};	
+printf $fh "Load %s\n", $input->{spectrumfile};	
+printf $fh "Load %s\n", $input->{samplefile};	
+printf $fh "Load %s\n", $input->{sourcefile};	
+
+#move sample to starting position
+my @move_to_start = (0.0, 0.0, 0.0);
+my @move = (0.0, 0.0, 0.0);
+my $step_size = ($end_value - $start_value) / $n_steps;
+
+if ($axis eq "x") {
+	$move_to_start[0] = $start_value;
+	$move[0] = $step_size;
+}
+elsif ($axis eq "y") {
+	$move_to_start[1] = $start_value;
+	$move[1] = $step_size;
+}
+elsif ($axis eq "z") {
+	$move_to_start[2] = $start_value;
+	$move[2] = $step_size;
+}
+
+xrmc::write_translatefile($input, "move-to-start.dat", \@move_to_start);
+xrmc::write_translatefile($input, "translate.dat", \@move);
+
+my $counter = 0;
+printf $fh "Load %s\n", "move-to-start.dat";	
+printf $fh "Run %s\n",  $input->{detectorconvolute}->{name};
+printf $fh "Save %s %s %s\n", $input->{savedevice}, $input->{saveimagetype}, "output_".$counter++.".dat";	
+
+for (my $i = 1 ; $i <= $n_steps ; $i++) {
+	printf $fh "Load %s\n", "translate.dat";
+	printf $fh "Run %s\n",  $input->{detectorconvolute}->{name};
+	printf $fh "Save %s %s %s\n", $input->{savedevice}, $input->{saveimagetype}, "output_".$counter++.".dat";	
+	
+}
+
+close ($fh);
