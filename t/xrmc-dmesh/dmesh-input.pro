@@ -30,4 +30,12 @@ ct2[*,2] = reverse(ct[*,2])
 
 my_image = IMAGE(data, axis_style=2,rgb_table=ct2,title='Fe-Ka net-line intensities distribution',POSITION=[0.12,0.12,0.77,0.93],xtitle='# pixels',ytitle='# pixels')
 my_cb = colorbar(target=my_image,orientation=1, textpos=1,tickdir=1,border_on=1,title='Counts (a.u.)',POSITION=[0.83,0.12,0.90,0.93])
+
+openw, lun, 'ascii_output.dat', /get_lun
+printf, lun, 2 
+printf, lun, size(data, /dimensions)
+printf, lun, data
+free_lun, lun
+
+
 END
