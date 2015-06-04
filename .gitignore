@@ -23,5 +23,7 @@ build2
 *.zip
 output_*.dat
 dscan-input.dat
+dmesh-input.dat
 move-to-start.dat
+move-to-newline.dat
 translate.dat
