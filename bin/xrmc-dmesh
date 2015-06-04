@@ -1,0 +1,117 @@
+#!/usr/bin/env perl
+
+use strict;
+use Scalar::Util qw(looks_like_number);
+use xrmc;
+use syntax 'junction';
+
+
+
+if (scalar(@ARGV) != 9) {
+	die "USAGE: xrmc-dmesh input-file axis1 start_value1 end_value1 n_steps1 axis2 start_value2 end_value2 n_steps2";
+}
+
+my @axes = ("x", "y", "z");
+
+my $axis1 = $ARGV[1];
+my $start_value1 = $ARGV[2];
+my $end_value1 = $ARGV[3];
+my $n_steps1 = $ARGV[4];
+my $axis2 = $ARGV[5];
+my $start_value2 = $ARGV[6];
+my $end_value2 = $ARGV[7];
+my $n_steps2 = $ARGV[8];
+
+die "axis1 must be x, y or z" unless any(@axes) eq $axis1;
+die "axis2 must be x, y or z" unless any(@axes) eq $axis2;
+die "axis1 and axis2 have to be different" unless($axis1 ne $axis2);
+
+die "start_value1 must be numerical" unless(looks_like_number($start_value1));
+die "end_value1 must be numerical" unless(looks_like_number($end_value1));
+die "n_steps1 must be numerical" unless(looks_like_number($n_steps1));
+die "end_value1 must be greater than start_value" unless($start_value1 < $end_value1);
+die "n_steps1 must be a positive number" unless($n_steps1 >= 1);
+
+die "start_value2 must be numerical" unless(looks_like_number($start_value2));
+die "end_value2 must be numerical" unless(looks_like_number($end_value2));
+die "n_steps2 must be numerical" unless(looks_like_number($n_steps2));
+die "end_value2 must be greater than start_value" unless($start_value2 < $end_value2);
+die "n_steps2 must be a positive number" unless($n_steps2 >= 1);
+
+# first read the input-file
+my $input = xrmc::parse_inputfile($ARGV[0]);
+die "detector must be detectorconvolute" unless (exists($input->{detectorconvolutefile}));
+#
+# produce the new input-file
+open (my $fh, ">", "dmesh-input.dat") or die "Could not open dmesh-input.dat for writing: $!";
+printf $fh "Load %s\n", $input->{detectorconvolutefile};	
+printf $fh "Load %s\n", $input->{compositionfile};	
+printf $fh "Load %s\n", $input->{geom3dfile};	
+printf $fh "Load %s\n", $input->{quadricarrayfile};	
+printf $fh "Load %s\n", $input->{spectrumfile};	
+printf $fh "Load %s\n", $input->{samplefile};	
+printf $fh "Load %s\n", $input->{sourcefile};	
+
+
+#move sample to starting position
+my @move_to_start = (0.0, 0.0, 0.0);
+my @move_to_newline = (0.0, 0.0, 0.0);
+my @move = (0.0, 0.0, 0.0);
+my $step_size1 = ($end_value1 - $start_value1) / $n_steps1;
+my $step_size2 = ($end_value2 - $start_value2) / $n_steps2;
+
+if ($axis1 eq "x") {
+	$move_to_start[0] = $start_value1;
+	$move[0] = $step_size1;
+	$move_to_newline[0] = -1.0*($end_value1 - $start_value1);
+}
+elsif ($axis1 eq "y") {
+	$move_to_start[1] = $start_value1;
+	$move[1] = $step_size1;
+	$move_to_newline[1] = -1.0*($end_value1 - $start_value1);
+}
+elsif ($axis1 eq "z") {
+	$move_to_start[2] = $start_value1;
+	$move[2] = $step_size1;
+	$move_to_newline[2] = -1.0*($end_value1 - $start_value1);
+}
+
+if ($axis2 eq "x") {
+	$move_to_start[0] = $start_value2;
+	$move_to_newline[0] = $step_size2;
+}
+elsif ($axis2 eq "y") {
+	$move_to_start[1] = $start_value2;
+	$move_to_newline[1] = $step_size2;
+}
+elsif ($axis2 eq "z") {
+	$move_to_start[2] = $start_value2;
+	$move_to_newline[2] = $step_size2;
+}
+
+
+# create TranslateAll files
+xrmc::write_translatefile($input, "move-to-start.dat", \@move_to_start);
+xrmc::write_translatefile($input, "translate.dat", \@move);
+xrmc::write_translatefile($input, "move-to-newline.dat", \@move_to_newline);
+
+# axis2 is the 'slow' motor, axis1 is the 'fast' one
+for (my $i2 = 0 ; $i2 <= $n_steps2 ; $i2++) {
+	for (my $i1 = 0 ; $i1 <= $n_steps1 ; $i1++) {
+		if ($i1 == 0 and $i2 == 0) {
+			printf $fh "Load %s\n", "move-to-start.dat";	
+		}
+		elsif ($i1 == 0) {
+			printf $fh "Load %s\n", "move-to-newline.dat";
+		}
+		else {
+			printf $fh "Load %s\n", "translate.dat";
+		}
+		printf $fh "Run %s\n",  $input->{detectorconvolute}->{name};
+		printf $fh "Save %s %s %s\n", $input->{savedevice}, $input->{saveimagetype}, "output_".$i1."_".$i2.".dat";	
+	}
+}
+
+close ($fh);
+
+

@@ -1,0 +1,15 @@
+; 3D object geometric description file
+;
+Newdevice geom3d                          ; Device type
+Geom3D                          ; Device name
+QArrName QuadricArray		; Quadric array input device name
+CompName Composition            ; Composition input device name
+
+
+Object Ell
+Sample Vacuum ; Phase in, phase out
+1				; Number of quadrics
+ell
+
+
+End

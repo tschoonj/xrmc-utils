@@ -28,8 +28,9 @@ die "n_steps must be a positive number" unless($n_steps >= 1);
 
 # first read the input-file
 my $input = xrmc::parse_inputfile($ARGV[0]);
+die "detector must be detectorconvolute" unless (exists($input->{detectorconvolutefile}));
 
-
+# produce the new input-file
 open (my $fh, ">", "dscan-input.dat") or die "Could not open dscan-input.dat for writing: $!";
 printf $fh "Load %s\n", $input->{detectorconvolutefile};	
 printf $fh "Load %s\n", $input->{compositionfile};	

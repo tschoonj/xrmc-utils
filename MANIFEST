@@ -2,3 +2,4 @@ Makefile.PL
 MANIFEST
 lib/xrmc.pm
 bin/xrmc-dscan
+bin/xrmc-dmesh
