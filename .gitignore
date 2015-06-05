@@ -26,4 +26,8 @@ dscan-input.dat
 dmesh-input.dat
 move-to-start.dat
 move-to-newline.dat
+__pycache__/*
+*.pyc
 translate.dat
+dist
+xrmc.egg-info
