@@ -3,6 +3,7 @@ setup(
     name = "xrmc",
     version = "6.6.0",
     py_modules = ['xrmc'],
+    scripts = ['xrmc-plot'],
 
     requires = ['numpy', 'matplotlib'],
     install_requires = ['numpy', 'matplotlib'],

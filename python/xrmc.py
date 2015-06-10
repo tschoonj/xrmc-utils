@@ -35,7 +35,7 @@ class Output:
 
     def plot(self, ScatOrderNum = None):
         if (ScatOrderNum != None and (ScatOrderNum > self.ModeNum -1 or ScatOrderNum < 0)):
-            raise IndexError('ScatOrderNum out of range. Must be smaller than '+self.ModeNum)
+            raise IndexError('ScatOrderNum out of range. Must be smaller than '+str(self.ModeNum))
         my_shape = self.data.shape
         if (my_shape[2] == 1 and my_shape[3] == 1):
             # Case 1: spectrum plot
@@ -64,7 +64,7 @@ class Output:
                 # integrate
                 data = self.data.sum(0).sum(0)
             else:
-                data = self.data[ScatOrderNum,:,:,:].sum(1)
+                data = self.data[ScatOrderNum,:,:,:].sum(0)
             fig = plt.figure(figsize=(6, 3.2))
             ax = fig.add_subplot(111)
             ax.set_title(self.filename)
