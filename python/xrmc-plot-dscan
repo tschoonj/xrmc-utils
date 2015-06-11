@@ -19,6 +19,14 @@ if (vars(args)['ScatOrderNum'] != None and vars(args)['ScatOrderNum'] < 0):
     print('ScatOrderNum must be greater than or equal to zero')
     sys.exit(1)
 
+if (vars(args)['start_value'] >= vars(args)['end_value']):
+    print('start_value must be less than end_value!')
+    sys.exit(1)
+
+if (vars(args)['n_steps'] < 1):
+    print('n_steps must be greater than zero!')
+    sys.exit(1)
+
 #print(vars(args))
 
 try:
