@@ -1,6 +1,8 @@
 import numpy as np
 import struct
 import matplotlib.pyplot as plt
+import xraylib
+
 
 class Output:
     """ A class whose instances will represent XRMC output files"""
@@ -78,5 +80,41 @@ class Output:
             plt.colorbar(orientation='vertical')
             plt.show()
 
+    def get_roi_from_XRF_line(self,XRFline):
+        """This function determines the region of interest that
+        should be used to represent an XRF line"""
+
+        # first thing to do is determine which element and line we are dealing with
+        # split the string along the dash
+        try:
+            (element, line) = XRFline.split('-')
+            #print('element: ' + element)
+            #print('line: ' + line)
+
+            atomic_number = xraylib.SymbolToAtomicNumber(element)
+            if (atomic_number == 0):
+                raise ValueError(element + ' could not be parsed by xraylib.SymbolToAtomicNumber')
+            #print('atomic_number:' + str(atomic_number))
+
+            line_macro = xraylib.__dict__[line.upper() + '_LINE']
+            #print('line_macro:' + str(line_macro))
+
+            line_energy = xraylib.LineEnergy(atomic_number, line_macro)
+            #print('line_energy: ' + str(line_energy))
+            if (line_energy == 0.0):
+                raise ValueError('XRF line '+XRFline+' does not exist in the xraylib database')
+
+            if (self.PixelType != 2):
+                raise ValueError('get_roi_from_XRF_line requires that the object has PixelType 2')
+
+            channel = int(self.NBins * (line_energy - self.Emin)/(self.Emax - self.Emin))
+            #print('channel:' + str(channel))
+            if (channel < 0 or channel >= self.NBins):
+                raise ValueError('requested XRF line not covered by spectrum')
+
+            return slice(max(0, channel - 10), min(self.NBins-1, channel + 10))
+
+        except Exception as e:
+            raise Exception(str(e))
 
         

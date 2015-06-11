@@ -5,7 +5,7 @@ import xrmc
 import sys
 
 parser = argparse.ArgumentParser(description='Plots XRMC output-files')
-parser.add_argument('--ScatOrderNum', type=int)
+parser.add_argument('--ScatOrderNum', type=int, help='Plot only contribution for N interactions', metavar='N')
 parser.add_argument('output-file', type=str)
 args = parser.parse_args()
 #print(args)
