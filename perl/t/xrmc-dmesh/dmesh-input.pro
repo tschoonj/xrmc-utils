@@ -1,10 +1,10 @@
 ;prepare inputfile for dmesh
-SPAWN, '../../bin/xrmc-dmesh input.dat y -0.1 0.1 20 x -0.1 0.1 20', EXIT_STATUS=status
-IF (status NE 0) THEN MESSAGE, 'Failure executing xrmc-dmesh'
+;SPAWN, '../../bin/xrmc-dmesh input.dat y -0.1 0.1 20 x -0.1 0.1 20', EXIT_STATUS=status
+;IF (status NE 0) THEN MESSAGE, 'Failure executing xrmc-dmesh'
 
 ;execute inputfile with xrmc
-SPAWN, 'xrmc dmesh-input.dat'
-IF (status NE 0) THEN MESSAGE, 'Failure executing xrmc'
+;SPAWN, 'xrmc dmesh-input.dat'
+;IF (status NE 0) THEN MESSAGE, 'Failure executing xrmc'
 
 ;read in the outputfiles
 data = dblarr(21,21) 

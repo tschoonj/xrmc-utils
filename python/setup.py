@@ -12,7 +12,7 @@ setup(
     name = "xrmc",
     version = "6.6.0",
     py_modules = ['xrmc'],
-    scripts = ['xrmc-plot', 'xrmc-plot-dscan'],
+    scripts = ['xrmc-plot', 'xrmc-plot-dscan', 'xrmc-plot-dmesh'],
 
     requires = ['numpy', 'matplotlib'],
     install_requires = ['numpy', 'matplotlib'],
