@@ -18,6 +18,7 @@ parser.add_argument('axis2', type=str, help='The name of the second motoraxis us
 parser.add_argument('start_value2', type=float, help='The starting value of the second motoraxis')
 parser.add_argument('end_value2', type=float, help='The ending value of the second motoraxis')
 parser.add_argument('n_steps2', type=int, help='The number of steps it takes for the second motor to get from start_value2 to end_value2')
+parser.add_argument('--write-to-csv', type=str, help='Write plot to CSV file FILENAME', metavar='FILENAME')
 args = parser.parse_args()
 
 if (vars(args)['ScatOrderNum'] != None and vars(args)['ScatOrderNum'] < 0):
@@ -70,9 +71,9 @@ try:
             if (vars(args)['ScatOrderNum'] != None):
                 if (vars(args)['ScatOrderNum'] > obj.NodeNum -1):
                     raise IndexError('ScatOrderNum out of range. Must be smaller than '+str(obj.ModeNum))
-                y_vals[i,j] = obj.data[vars(args)['ScatOrderNum'],bin_scope,:,:].sum()
+                y_vals[i,j] = obj[vars(args)['ScatOrderNum'],bin_scope,:,:].sum()
             else:
-                y_vals[i,j] = obj.data[:,bin_scope,:,:].sum()
+                y_vals[i,j] = obj[:,bin_scope,:,:].sum()
 
 
     extent = None
@@ -81,6 +82,9 @@ try:
         extent = [vars(args)['start_value1'], vars(args)['end_value1'], vars(args)['start_value2'], vars(args)['end_value2']]
     else:
         extent = [vars(args)['start_value2'], vars(args)['end_value2'], vars(args)['start_value1'], vars(args)['end_value1']]
+
+    if vars(args)['write_to_csv'] is not None:
+        numpy.savetxt(vars(args)['write_to_csv'], y_vals, delimiter=',')
 
     fig = plt.figure(figsize=(6, 3.2))
     ax = fig.add_subplot(111)

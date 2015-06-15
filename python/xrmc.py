@@ -58,19 +58,19 @@ class Output(np.ndarray):
         if obj is None:
             return
         if hasattr(obj, 'PixelSizeX'):
-            self.PixelSizeX = getattr(obj, PixelSizeX)
+            self.PixelSizeX = getattr(obj, 'PixelSizeX')
         if hasattr(obj, 'PixelSizeY'):
-            self.PixelSizeY = getattr(obj, PixelSizeY)
+            self.PixelSizeY = getattr(obj, 'PixelSizeY')
         if hasattr(obj, 'ExpTime'):
-            self.ExpTime = getattr(obj, ExpTime)
+            self.ExpTime = getattr(obj, 'ExpTime')
         if hasattr(obj, 'PixelType'):
-            self.PixelType= getattr(obj, PixelType)
+            self.PixelType= getattr(obj, 'PixelType')
         if hasattr(obj, 'Emin'):
-            self.Emin = getattr(obj, Emin)
+            self.Emin = getattr(obj, 'Emin')
         if hasattr(obj, 'Emax'):
-            self.Emax = getattr(obj, Emax)
+            self.Emax = getattr(obj, 'Emax')
         if hasattr(obj, 'filename'):
-            self.filename = getattr(obj, filename)
+            self.filename = getattr(obj, 'filename')
 
     def write_to_csv(self, filename, ScatOrderNum = None):
         """Write the object contents to a CSV file,

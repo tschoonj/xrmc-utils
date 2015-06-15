@@ -13,6 +13,7 @@ parser.add_argument('axis', type=str, help='The name of the motoraxis used in th
 parser.add_argument('start_value', type=float, help='The starting value of the dscan')
 parser.add_argument('end_value', type=float, help='The ending value of the dscan')
 parser.add_argument('n_steps', type=int, help='The number of steps it takes the dscan to get from start_value to end_value')
+parser.add_argument('--write-to-csv', type=str, help='Write plot to CSV file FILENAME', metavar='FILENAME')
 args = parser.parse_args()
 
 if (vars(args)['ScatOrderNum'] != None and vars(args)['ScatOrderNum'] < 0):
@@ -49,10 +50,13 @@ try:
         if (vars(args)['ScatOrderNum'] != None):
             if (vars(args)['ScatOrderNum'] > obj.NodeNum -1):
                 raise IndexError('ScatOrderNum out of range. Must be smaller than '+str(obj.ModeNum))
-            y_vals[i] = obj.data[vars(args)['ScatOrderNum'],bin_scope,:,:].sum()
+            y_vals[i] = obj[vars(args)['ScatOrderNum'],bin_scope,:,:].sum()
         else:
-            y_vals[i] = obj.data[:,bin_scope,:,:].sum()
+            y_vals[i] = obj[:,bin_scope,:,:].sum()
     #print(y_vals)
+    if vars(args)['write_to_csv'] is not None:
+        numpy.savetxt(vars(args)['write_to_csv'], y_vals, delimiter=',')
+
     plt.plot(x_vals, y_vals, color='blue', lw=2)
     plt.xlabel('Motor-axis '+vars(args)['axis']+' position')
     plt.ylabel('Counts')
