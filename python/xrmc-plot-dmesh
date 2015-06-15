@@ -62,7 +62,7 @@ try:
             #    raise ValueError(filename + ': detector pixels should be equal to 1 in both directions')
             bin_scope = None
 
-            if (vars(args)['XRFline'] != None):
+            if (vars(args)['XRFline'] is not None):
                 bin_scope = obj.get_roi_from_XRF_line(vars(args)['XRFline'])
             else:
                 bin_scope = slice(0, obj.NBins-1)
