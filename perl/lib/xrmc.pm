@@ -79,9 +79,14 @@ sub parse_inputfile{
 			$line =~ s/^\s+//;
 			$line =~ s/\s+$//;
 			my @comps = split(/\s+/, $line);
-			$rv{savedevice} = $comps[0];
-			$rv{saveimagetype} = $comps[1];
-			$rv{savefilename} = $comps[2];
+			if (not exists $rv{savecommands}) {
+				$rv{savecommands} = [];
+			}
+			my %savecommand;
+			$savecommand{savedevice} = $comps[0];
+			$savecommand{saveimagetype} = $comps[1];
+			$savecommand{savefilename} = $comps[2];
+			push @{$rv{savecommands}}, \%savecommand;
 		}
 	}
 	close($fh);
@@ -303,8 +308,9 @@ sub write_inputfile {
 	printf $fh "Load %s\n", $input->{samplefile};	
 	printf $fh "Load %s\n", $input->{sourcefile};	
 	printf $fh "Run %s\n",  $input->{detectorarray}->{name};	
-	printf $fh "Save %s %s %s\n", $input->{savedevice}, $input->{saveimagetype}, $input->{savefilename};	
-
+	foreach my $savecommand (@{$input->{savecommands}}) { 
+		printf $fh "Save %s %s %s\n", $savecommand->{savedevice}, $savecommand->{saveimagetype}, $savecommand->{savefilename};	
+	}
 
 	close($fh);
 

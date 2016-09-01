@@ -61,16 +61,15 @@ elsif ($axis eq "z") {
 xrmc::write_translatefile($input, "move-to-start.dat", \@move_to_start);
 xrmc::write_translatefile($input, "translate.dat", \@move);
 
-my $counter = 0;
-printf $fh "Load %s\n", "move-to-start.dat";	
-printf $fh "Run %s\n",  $input->{detectorconvolute}->{name};
-printf $fh "Save %s %s %s\n", $input->{savedevice}, $input->{saveimagetype}, "output_".$counter++.".dat";	
-
-for (my $i = 1 ; $i <= $n_steps ; $i++) {
+for (my $i = 0 ; $i <= $n_steps ; $i++) {
+	if ($i == 0) {
+		printf $fh "Load %s\n", "move-to-start.dat";	
+	}
 	printf $fh "Load %s\n", "translate.dat";
 	printf $fh "Run %s\n",  $input->{detectorconvolute}->{name};
-	printf $fh "Save %s %s %s\n", $input->{savedevice}, $input->{saveimagetype}, "output_".$counter++.".dat";	
-	
+	foreach my $savecommand (@{$input->{savecommands}}) { 
+		printf $fh "Save %s %s %s\n", $savecommand->{savedevice}, $savecommand->{saveimagetype}, "output_".lc($savecommand->{saveimagetype})."_".$i.".dat";
+	}
 }
 
 close ($fh);

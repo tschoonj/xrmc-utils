@@ -108,7 +108,9 @@ for (my $i2 = 0 ; $i2 <= $n_steps2 ; $i2++) {
 			printf $fh "Load %s\n", "translate.dat";
 		}
 		printf $fh "Run %s\n",  $input->{detectorconvolute}->{name};
-		printf $fh "Save %s %s %s\n", $input->{savedevice}, $input->{saveimagetype}, "output_".$i1."_".$i2.".dat";	
+		foreach my $savecommand (@{$input->{savecommands}}) { 
+			printf $fh "Save %s %s %s\n", $savecommand->{savedevice}, $savecommand->{saveimagetype}, "output_".lc($savecommand->{saveimagetype})."_".$i1."_".$i2.".dat";
+		}
 	}
 }
 
