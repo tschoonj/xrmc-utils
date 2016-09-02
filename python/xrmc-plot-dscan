@@ -9,11 +9,12 @@ import matplotlib.pyplot as plt
 parser = argparse.ArgumentParser(description='Plots XRMC dscan results')
 parser.add_argument('--ScatOrderNum', type=int, help='Plot only contribution for N interactions. Default is to sum over all contributions.', metavar='N')
 parser.add_argument('--XRFline', type=str, help='Plot only contribution for a given fluorescence line. Example: Fe-Ka or Pb-L3M5')
+parser.add_argument('--prefix', type=str, help='File prefix (may include path) PREFIX', default='output_convolutedimage_', metavar='PREFIX')
+parser.add_argument('--write-to-csv', type=str, help='Write plot to CSV file FILENAME', metavar='FILENAME')
 parser.add_argument('axis', type=str, help='The name of the motoraxis used in the dscan', choices=['x', 'y', 'z'])
 parser.add_argument('start_value', type=float, help='The starting value of the dscan')
 parser.add_argument('end_value', type=float, help='The ending value of the dscan')
 parser.add_argument('n_steps', type=int, help='The number of steps it takes the dscan to get from start_value to end_value')
-parser.add_argument('--write-to-csv', type=str, help='Write plot to CSV file FILENAME', metavar='FILENAME')
 args = parser.parse_args()
 
 if (vars(args)['ScatOrderNum'] != None and vars(args)['ScatOrderNum'] < 0):
@@ -35,7 +36,7 @@ try:
     #print(x_vals)
     y_vals = numpy.empty(vars(args)['n_steps'] + 1, dtype=numpy.double) 
     for i in range(0,vars(args)['n_steps'] + 1):
-        filename = 'output_'+str(i)+'.dat'
+        filename = vars(args)['prefix']+str(i)+'.dat'
         #print(filename)
         obj = xrmc.Output(filename)
         #if obj.NX != obj.NY != 1:

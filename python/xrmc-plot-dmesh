@@ -10,6 +10,8 @@ parser = argparse.ArgumentParser(description='Plots XRMC dmesh results')
 parser.add_argument('--ScatOrderNum', type=int, help='Plot only contribution for N interactions. Default is to sum over all contributions.', metavar='N')
 parser.add_argument('--XRFline', type=str, help='Plot only contribution for a given fluorescence line. Example: Fe-Ka or Pb-L3M5')
 parser.add_argument('--transpose', action='store_true', default=False)
+parser.add_argument('--prefix', type=str, help='File prefix (may include path) PREFIX', default='output_convolutedimage_', metavar='PREFIX')
+parser.add_argument('--write-to-csv', type=str, help='Write plot to CSV file FILENAME', metavar='FILENAME')
 parser.add_argument('axis1', type=str, help='The name of the first motoraxis used in the dmesh', choices=['x', 'y', 'z'])
 parser.add_argument('start_value1', type=float, help='The starting value of the first motoraxis')
 parser.add_argument('end_value1', type=float, help='The ending value of the first motoraxis')
@@ -18,7 +20,6 @@ parser.add_argument('axis2', type=str, help='The name of the second motoraxis us
 parser.add_argument('start_value2', type=float, help='The starting value of the second motoraxis')
 parser.add_argument('end_value2', type=float, help='The ending value of the second motoraxis')
 parser.add_argument('n_steps2', type=int, help='The number of steps it takes for the second motor to get from start_value2 to end_value2')
-parser.add_argument('--write-to-csv', type=str, help='Write plot to CSV file FILENAME', metavar='FILENAME')
 args = parser.parse_args()
 
 if (vars(args)['ScatOrderNum'] != None and vars(args)['ScatOrderNum'] < 0):
@@ -56,7 +57,7 @@ try:
 
     for i in range(0,vars(args)['n_steps1'] + 1):
         for j in range(0,vars(args)['n_steps2'] + 1):
-            filename = 'output_'+str(i)+'_'+str(j)+'.dat'
+            filename = vars(args)['prefix'] + str(i)+'_' + str(j)+'.dat'
             #print(filename)
             obj = xrmc.Output(filename)
             #if obj.NX != obj.NY != 1:

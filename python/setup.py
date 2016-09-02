@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys
 
-#a crude test that ensure xraylib is installed...
+#a crude test that ensures xraylib is installed...
 try:
     import xraylib
 except ImportError:
