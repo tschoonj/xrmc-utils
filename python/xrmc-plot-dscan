@@ -56,7 +56,7 @@ try:
             y_vals[i] = obj[:,bin_scope,:,:].sum()
     #print(y_vals)
     if vars(args)['write_to_csv'] is not None:
-        numpy.savetxt(vars(args)['write_to_csv'], y_vals, delimiter=',')
+        numpy.savetxt(vars(args)['write_to_csv'], numpy.c_[x_vals, y_vals], delimiter=',')
 
     plt.plot(x_vals, y_vals, color='blue', lw=2)
     plt.xlabel('Motor-axis '+vars(args)['axis']+' position')
