@@ -44,6 +44,7 @@ die "detector must be detectorconvolute" unless (exists($input->{detectorconvolu
 #
 # produce the new input-file
 open (my $fh, ">", "dmesh-input.dat") or die "Could not open dmesh-input.dat for writing: $!";
+printf $fh "; Inputfile generated with %s %s\n", $0, join(' ', @ARGV);
 printf $fh "Load %s\n", $input->{detectorconvolutefile};	
 printf $fh "Load %s\n", $input->{compositionfile};	
 printf $fh "Load %s\n", $input->{geom3dfile};	
